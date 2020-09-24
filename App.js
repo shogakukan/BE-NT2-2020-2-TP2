@@ -1,12 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import {vibrate} from './utils'
+import { vibrate } from './utils'
 import Reloj from "./components/reloj.js";
 import Display from "./components/display.js";
 import Fondo from "./components/fondo.js";
-import BtnPlayStop from "./components/boton-play-stop.js";
-import BtnReset from "./components/boton-reset.js";
+import Botonera from "./components/botonera.js";
 import Constants from 'expo-constants';
 
 
@@ -24,32 +23,32 @@ export default function App() {
   const [opacidad, setOpacidad] = useState(1);
 
   useEffect(() => {
-    if (activo){
+    if (activo) {
       if (contador === lapsoTrabajo || contador === lapsoDescanso) {
         setCountdown(--contador);
       }
       intervalID = setInterval(() => {
-            setCountdown(--contador);
+        setCountdown(--contador);
       }, 1000);
     } else {
       clearInterval(intervalID);
-      intervalID=null;
+      intervalID = null;
       contador = contador;
       setCountdown(contador);
     }
   }, [activo]);
 
-  useEffect(()=>{ 
-    setOpacidad(() => {return trabajo ? countdown / lapsoTrabajo : countdown / lapsoDescanso});
-    if (countdown === 0){
-      vibrate();  
-    } else if (countdown === -1){
+  useEffect(() => {
+    setOpacidad(() => { return trabajo ? countdown / lapsoTrabajo : countdown / lapsoDescanso });
+    if (countdown === 0) {
+      vibrate();
+    } else if (countdown === -1) {
       setTrabajo(!trabajo);
     }
   }, [countdown])
 
   useEffect(() => {
-    if (trabajo){
+    if (trabajo) {
       contador = lapsoTrabajo;
     } else {
       contador = lapsoDescanso;
@@ -57,9 +56,9 @@ export default function App() {
     setCountdown(contador);
   }, [trabajo]);
 
-  function reset(){
+  function reset() {
     contador = lapsoTrabajo;
-    if (activo){
+    if (activo) {
       setActivo(false);
     } else {
       setCountdown(contador);
@@ -68,22 +67,18 @@ export default function App() {
   }
 
   return (
-    
+
     <View style={styles.container}>
       <Fondo opacidad={opacidad} trabajo={trabajo} />
       <Display trabajo={trabajo} opacidad={opacidad} />
-      <Reloj sec = {countdown} />
-      <View style={styles.fixToText}>
-        <BtnPlayStop 
-          btnInicio = {(trabajo && countdown === lapsoTrabajo) || (!trabajo && countdown === lapsoDescanso)}
-          activo = {activo}
-          actionPlayStop = {setActivo}
-        />
-        <BtnReset
-          btnDisabled = {!activo && (trabajo && countdown === lapsoTrabajo)}
-          activo = {activo}
-          actionReset = {reset} />
-      </View>
+      <Reloj sec={countdown} />
+      <Botonera
+        activo={activo}
+        btnPlayEstado={(trabajo && countdown === lapsoTrabajo) || (!trabajo && countdown === lapsoDescanso)}
+        actionPlayStop={setActivo}
+        btnResetDisabled={!activo && (trabajo && countdown === lapsoTrabajo)}
+        actionReset={reset}
+      />
       <StatusBar style="auto" />
     </View>
   );
@@ -96,9 +91,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  fixToText: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+  }
 });
