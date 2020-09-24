@@ -32,16 +32,15 @@ export default function App() {
             setCountdown(--contador);
       }, 1000);
     } else {
-      detenerContador(contador);
+      clearInterval(intervalID);
+      intervalID=null;
+      contador = contador;
+      setCountdown(contador);
     }
   }, [activo]);
 
-  useEffect(()=>{
-    if (trabajo){
-      setOpacidad(countdown / lapsoTrabajo);
-    } else {
-      setOpacidad(countdown / lapsoDescanso);
-    }    
+  useEffect(()=>{ 
+    setOpacidad(() => {return trabajo ? countdown / lapsoTrabajo : countdown / lapsoDescanso});
     if (countdown === 0){
       vibrate();  
     } else if (countdown === -1){
@@ -58,19 +57,12 @@ export default function App() {
     setCountdown(contador);
   }, [trabajo]);
 
-  function detenerContador (sec){
-    clearInterval(intervalID);
-    intervalID=null;
-    contador = sec;
-    setCountdown(contador);
-  }
-
   function reset(){
     contador = lapsoTrabajo;
     if (activo){
       setActivo(false);
     } else {
-      detenerContador(contador);
+      setCountdown(contador);
     }
     setTrabajo(true);
   }
