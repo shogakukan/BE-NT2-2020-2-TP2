@@ -2,7 +2,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function Display({sec}) {
+export default function Reloj({sec}) {
     
 
     let segundos = dobleDigito(sec % 60);
